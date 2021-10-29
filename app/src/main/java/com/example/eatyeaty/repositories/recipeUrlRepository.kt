@@ -1,5 +1,7 @@
 package com.example.eatyeaty.repositories
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.json.JSONArray
 import org.json.JSONObject
 import org.json.JSONTokener
@@ -22,10 +24,13 @@ fun JSONObject.getJSONArrayOrDefault(key: String): JSONArray =
 
 
 
-fun loadData(url: String): RecipeUrlDAO =
-    getRecipeDataString(Jsoup.connect(url).get())?.let {
-        parseRecipeData(it)
-    } ?: RecipeUrlDAO()
+suspend fun loadData(url: String): RecipeUrlDAO {
+    return withContext(Dispatchers.IO) {
+        getRecipeDataString(Jsoup.connect(url).get())?.let {
+            parseRecipeData(it)
+        } ?: RecipeUrlDAO()
+    }
+}
 
 
 fun getRecipeDataString(doc: Document): JSONObject? {
