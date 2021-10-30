@@ -22,75 +22,56 @@ import com.example.eatyeaty.ui.ImageWithPlaceholder
 fun EditRecipe(
     value: Recipe,
     onValueChange: (r: Recipe) -> Unit,
-    onReloadClick: (url: String) -> Unit,
 ) {
-    Surface(color = MaterialTheme.colors.background) {
+    Column() {
+        OutlinedTextField(
+            value = value.title,
+            onValueChange = { onValueChange(value.copy(title = it)) },
+            Modifier.fillMaxWidth(),
+            label = { Text("Title") }
+        )
 
-        Column(
-            Modifier.verticalScroll(rememberScrollState())
-        ) {
-            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                OutlinedTextField(
-                    value = value.url,
-                    onValueChange = { onValueChange(value.copy(url = it)) },
-                    Modifier.weight(1f)
+        Spacer(modifier = Modifier.height(8.dp))
+
+        ImageWithPlaceholder(
+            modifier = Modifier
+                .height(200.dp)
+                .fillMaxWidth(),
+            value.image,
+            painterResource(id = R.drawable.recipe_placeholder),
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        OutlinedTextField(
+            modifier = Modifier
+                .defaultMinSize(minHeight = 100.dp)
+                .fillMaxWidth(),
+            label = { Text("Ingredients") },
+            value = value.ingredients.joinToString("\n"),
+            onValueChange = {
+                onValueChange(
+                    value.copy(
+                        ingredients = it.split("\n")
+                    )
                 )
-                IconButton(onClick = { onReloadClick(value.url) }) {
-                    Icon(Icons.Default.Refresh, contentDescription = "")
-                }
-            }
+            })
 
-            Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
-            OutlinedTextField(
-                value = value.title,
-                onValueChange = { onValueChange(value.copy(title = it)) },
-                Modifier.fillMaxWidth(),
-                placeholder = { Text("Title") }
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            ImageWithPlaceholder(
-                modifier = Modifier
-                    .height(200.dp)
-                    .fillMaxWidth(),
-                value.image,
-                painterResource(id = R.drawable.recipe_placeholder),
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            OutlinedTextField(
-                modifier = Modifier
-                    .defaultMinSize(minHeight = 100.dp)
-                    .fillMaxWidth(),
-                placeholder = { Text("Ingredients") },
-                value = value.ingredients.joinToString("\n"),
-                onValueChange = {
-                    onValueChange(
-                        value.copy(
-                            ingredients = it.split("\n")
-                        )
+        OutlinedTextField(
+            modifier = Modifier
+                .defaultMinSize(minHeight = 100.dp)
+                .fillMaxWidth(),
+            label = { Text("Instructions") },
+            value = value.instructions.joinToString("\n"),
+            onValueChange = {
+                onValueChange(
+                    value.copy(
+                        instructions = it.split("\n")
                     )
-                })
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            OutlinedTextField(
-                modifier = Modifier
-                    .defaultMinSize(minHeight = 100.dp)
-                    .fillMaxWidth(),
-                placeholder = { Text("Instructions") },
-                value = value.instructions.joinToString("\n"),
-                onValueChange = {
-                    onValueChange(
-                        value.copy(
-                            instructions = it.split("\n")
-                        )
-                    )
-                })
-        }
+                )
+            })
     }
 }
 
@@ -104,7 +85,6 @@ fun EditRecipePreview() {
         EditRecipe(
             value = recipe,
             onValueChange = setRecipe,
-            onReloadClick = { },
         )
     }
 }

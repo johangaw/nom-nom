@@ -1,19 +1,69 @@
 package com.example.eatyeaty.ui
 
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.eatyeaty.repositories.ImageLoader
+import com.example.eatyeaty.repositories.Recipe
+import com.example.eatyeaty.ui.screen.CreateRecipeScreen
+import com.example.eatyeaty.ui.theme.EatyEatyTheme
+import com.example.eatyeaty.ui.theme.EditRecipe
+import kotlinx.coroutines.launch
 
 
 @Composable
-fun App() {
+fun App(
+
+) {
     val controller = rememberNavController()
+    val (recipe, setRecipe) = remember {
+        mutableStateOf(Recipe())
+    }
 
-    NavHost(navController = controller, startDestination = "list") {
+    EatyEatyTheme {
+        NavHost(navController = controller, startDestination = "list") {
 
-        composable("list") {
-            ListScreen(onCreateClick = {})
+            composable("list") {
+                val scope = rememberCoroutineScope()
+                var showDialog by remember { mutableStateOf(false) }
+                ListScreen(onCreateClick = {
+                    showDialog = true
+                })
+
+                if (showDialog)
+                    RecipeUrlDialog(
+                        onDismissRequest = { showDialog = false },
+                        onSuccess = {
+
+                            // TODO: Try moving this logic into the viewmodel later
+                            scope.launch {
+                                setRecipe(
+                                    Recipe(
+                                        title = it.title,
+                                        instructions = it.instructions,
+                                        ingredients = it.ingredients,
+                                        image = it.imageUrl.let {
+                                            if (it.isNotEmpty())
+                                                ImageLoader.getInstance().load(it)
+                                            else
+                                                null
+                                        }
+                                    )
+                                )
+                                controller.navigate("create")
+                            }
+                        }
+                    )
+            }
+
+            composable("create") {
+                CreateRecipeScreen(
+                    recipe = recipe,
+                    onRecipeChange = setRecipe,
+                    onCreateClick = {}
+                )
+            }
         }
     }
 }
