@@ -126,4 +126,48 @@ class RecipeUrlRepositoryTest {
         // Assert
         assertEquals(expected, result)
     }
+
+    @Test
+    fun `parseRecipeData -- when instructions contain HowToSteps -- it returns instructions as strings`() {
+        // Arrange
+        val input = JSONObject()
+        input.put("recipeInstructions",
+            JSONArray()
+                .put(0, JSONObject().put("@type", "HowToStep").put("text", "Oven on 175"))
+                .put(1, JSONObject().put("@type", "HowToStep").put("text", "Cook stuff"))
+        )
+        val expected = listOf(
+            "Oven on 175",
+            "Cook stuff",
+        )
+
+        // Act
+        val result = parseRecipeData(input)
+
+        // Assert
+        assertEquals(expected, result.instructions)
+    }
+
+    @Test
+    fun `parseRecipeData -- when instructions contain HowToSteps with HTML -- it returns strings without HTML`() {
+        // Arrange
+        val input = JSONObject()
+        input.put("recipeInstructions",
+            JSONArray()
+                .put(0, JSONObject().put("@type", "HowToStep").put("text", "<b>Oven</b> on 175"))
+                .put(1, JSONObject().put("@type", "HowToStep").put("text", "Insert<br>Cook<br/>stuff"))
+        )
+        val expected = listOf(
+            "Oven on 175",
+            "Insert",
+            "Cook",
+            "stuff",
+        )
+
+        // Act
+        val result = parseRecipeData(input)
+
+        // Assert
+        assertEquals(expected, result.instructions)
+    }
 }

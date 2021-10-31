@@ -15,13 +15,12 @@ operator fun JSONArray.iterator(): Iterable<Any> =
         .map { get(it) }
         .asIterable()
 
-fun JSONObject.getStringOrDefault(key: String): String =
-    if (has(key)) getString(key) else ""
+fun JSONObject.getString(key: String, fallback: String): String =
+    if (has(key)) getString(key) else fallback
 
 
-fun JSONObject.getJSONArrayOrDefault(key: String): JSONArray =
-    if (has(key)) getJSONArray(key) else JSONArray()
-
+fun JSONObject.getJSONArray(key: String, fallback: JSONArray): JSONArray =
+    if (has(key)) getJSONArray(key) else fallback
 
 
 suspend fun loadData(url: String): RecipeUrlDAO {
@@ -48,16 +47,31 @@ fun getRecipeDataString(doc: Document): JSONObject? {
                 else -> listOf()
             }
         }
-        .find { it.has("@type") && it.getString("@type") == "Recipe" }
+        .find { it.has("@type") && it.getString("@type", "") == "Recipe" }
 }
 
 fun parseRecipeData(json: JSONObject): RecipeUrlDAO {
     return RecipeUrlDAO(
-        title = json.getStringOrDefault("name"),
-        instructions = json.getJSONArrayOrDefault("recipeInstructions").iterator().map { it.toString() }
+        title = json.getString("name", ""),
+        instructions = json.getJSONArray("recipeInstructions", JSONArray())
+            .iterator()
+            .map {
+                if (it is JSONObject && it.getString("@type", "") == "HowToStep")
+                    it.getString("text", "")
+                else
+                    it.toString()
+            }
+            .flatMap {
+                it
+                    .replace(Regex("<br.*?>"), "\n")
+                    .replace(Regex("<.*?>"), "")
+                    .split("\n")
+            }
             .toList(),
-        ingredients = json.getJSONArrayOrDefault("recipeIngredient").iterator().map { it.toString() }
+        ingredients = json.getJSONArray("recipeIngredient", JSONArray())
+            .iterator()
+            .map { it.toString() }
             .toList(),
-        imageUrl = json.getStringOrDefault("image"),
+        imageUrl = json.getString("image", ""),
     )
 }
