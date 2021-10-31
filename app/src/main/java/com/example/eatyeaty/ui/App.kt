@@ -11,6 +11,11 @@ import com.example.eatyeaty.ui.theme.EatyEatyTheme
 import com.example.eatyeaty.ui.theme.EditRecipe
 import kotlinx.coroutines.launch
 
+abstract class Route(val route: String) {
+    class List: Route("list")
+    class Create: Route("create")
+}
+
 
 @Composable
 fun App(
@@ -22,9 +27,9 @@ fun App(
     }
 
     EatyEatyTheme {
-        NavHost(navController = controller, startDestination = "list") {
+        NavHost(navController = controller, startDestination = Route.List().route) {
 
-            composable("list") {
+            composable(Route.List().route) {
                 val scope = rememberCoroutineScope()
                 var showDialog by remember { mutableStateOf(false) }
                 ListScreen(
@@ -65,7 +70,7 @@ fun App(
                     )
             }
 
-            composable("create") {
+            composable(Route.Create().route) {
                 CreateRecipeScreen(
                     recipe = recipe,
                     onRecipeChange = setRecipe,
