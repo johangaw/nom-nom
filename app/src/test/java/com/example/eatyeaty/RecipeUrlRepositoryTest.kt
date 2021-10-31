@@ -14,7 +14,7 @@ fun getHTML(json: String): String = """<html><head><script type="application/ld+
 
 class RecipeUrlRepositoryTest {
     @Test
-    fun getRecipeDataString_whenNoCorrectScriptTagsIsFound_ItReturnsNull() {
+    fun `getRecipeDataString -- when no correct script tags are found -- it returns null`() {
         // Arrange
         val doc = Jsoup.parse("<html><head> </head></html>")
 
@@ -26,7 +26,7 @@ class RecipeUrlRepositoryTest {
     }
 
     @Test
-    fun getRecipeDataString_whenAnEmptyScriptTagsIsFound_ItReturnsNull() {
+    fun `getRecipeDataString -- when an empty script tags is found -- it returns null`() {
         // Arrange
         val doc = Jsoup.parse(getHTML(""))
 
@@ -38,7 +38,7 @@ class RecipeUrlRepositoryTest {
     }
 
     @Test
-    fun getRecipeDataString_whenTheScriptTagContainsOneNoneRecipeObject_ItReturnsNull() {
+    fun `getRecipeDataString -- when the script tag contains one none recipe object -- it returns null`() {
         // Arrange
         val doc = Jsoup.parse(getHTML("""{"ugg": 1337}"""))
 
@@ -50,7 +50,7 @@ class RecipeUrlRepositoryTest {
     }
 
     @Test
-    fun getRecipeDataString_whenTheScriptTagContainsOneRecipeObject_ItReturnsTheRecipeJSONObject() {
+    fun `getRecipeDataString -- when the script tag contains one recipe object -- it returns the recipe JSONObject`() {
         // Arrange
         val doc = Jsoup.parse(getHTML("""{"@type": "Recipe", "name": "Klassisk lasagne"}"""))
 
@@ -63,7 +63,7 @@ class RecipeUrlRepositoryTest {
     }
 
     @Test
-    fun getRecipeDataString_whenTheScriptTagContainsAnArrayOfNoneRecipeObject_ItReturnsNull() {
+    fun `getRecipeDataString -- when the script tag contains an array of none recipe Object -- it returns null`() {
         // Arrange
         val doc = Jsoup.parse(getHTML("""[{"@type": "ugg"}, {}]"""))
 
@@ -75,7 +75,7 @@ class RecipeUrlRepositoryTest {
     }
 
     @Test
-    fun getRecipeDataString_whenTheScriptTagContainsAnArrayWithOneRecipeObject_ItReturnsTheRecipeJSONObject() {
+    fun `getRecipeDataString -- when the script tag contains an array with one recipe object -- itreturns the recipe JSONObject`() {
         // Arrange
         val doc = Jsoup.parse(getHTML("""[{"@type": "ugg"}, {"@type": "Recipe", "name": "Klassisk lasagne"}]"""))
 
@@ -88,7 +88,7 @@ class RecipeUrlRepositoryTest {
     }
 
     @Test
-    fun parseRecipeData_whenAllFieldsArePresent_ItReturnsACorrespondingDAO() {
+    fun `parseRecipeData -- when all fields are present -- it returns a corresponding DAO`() {
         // Arrange
         val input = JSONObject()
         input.put("name", "Steak")
@@ -110,7 +110,7 @@ class RecipeUrlRepositoryTest {
     }
 
     @Test
-    fun parseRecipeData_whenFieldsAreMissing_ItReturnsACorrespondingDAO() {
+    fun `parseRecipeData -- when fields are missing -- it returns a corresponding DAO`() {
         // Arrange
         val input = JSONObject()
         val expected = RecipeUrlDAO(
