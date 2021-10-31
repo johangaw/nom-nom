@@ -26,7 +26,7 @@ fun JSONObject.getJSONArray(key: String, fallback: JSONArray): JSONArray =
 suspend fun loadData(url: String): RecipeUrlDAO {
     return withContext(Dispatchers.IO) {
         getRecipeDataString(Jsoup.connect(url).get())?.let {
-            parseRecipeData(it)
+            parseRecipeData(it).copy(url = url)
         } ?: RecipeUrlDAO()
     }
 }

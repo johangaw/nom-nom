@@ -3,6 +3,7 @@ package com.example.eatyeaty.repositories
 import android.graphics.Bitmap
 
 data class RecipeUrlDAO(
+    val url: String = "",
     val title: String = "",
     val instructions: List<String> = listOf(),
     val ingredients: List<String> = listOf(),

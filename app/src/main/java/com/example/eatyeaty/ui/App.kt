@@ -48,7 +48,8 @@ fun App(
                                                 ImageLoader.getInstance().load(it)
                                             else
                                                 null
-                                        }
+                                        },
+                                        url = it.url
                                     )
                                 )
                                 controller.navigate("create")
