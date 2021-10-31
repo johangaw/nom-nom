@@ -11,6 +11,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.eatyeaty.R
+import com.example.eatyeaty.fixtures.recipe1
 import com.example.eatyeaty.repositories.Recipe
 import com.example.eatyeaty.ui.screen.ShowRecipeScreen
 
@@ -69,27 +70,7 @@ fun ShowRecipe(
 @Composable
 fun ShowRecipePreview() {
     ShowRecipe(
-        recipe = Recipe(
-            title = "Salty caramel cheesecake på kladdkakebotten",
-            ingredients = listOf(
-                "Kladdkakabotten",
-                "2 ägg",
-                "1 dl strösocker",
-                "100 g smör",
-                "1 dl vetemjöl",
-                "0,75 dl kakao (av bra kvalitet)",
-                "1 msk vaniljsocker",
-            ),
-            instructions = listOf(
-                "Kladdkaka",
-                "Smöra kanterna på en rund springform som är 24 cm i diameter med smör och lägg bakplåtspapper i botten. Smält smöret i en kastrull och låt svalna något. Rör ihop ägg och socker. Blanda ihop vetemjöl kakao och vaniljsocker. Sikta ner i äggsmeten och blanda. Häll i det smälta smöret och rör runt med en slickepott till en fin smet. Häll smeten i springformen och försök att fördela så jämnt som möjligt. Lägg åt sidan.",
-                "",
-                "Salty caramel",
-                "Värm sockret på med medelhög värme i en kastrull. Rör om hela tiden tills allt socker har smält (sockret kommer hårdna och bli till små kristaller men den kommer att smälta, se bara till att sockret ej bränns). Tillsätt smöret och låt allt gå ihop. Häll i grädden och låt koka under omrörning i ca 1-2 minuter eller tills härligt seg rinnande och fin färg. Tillsätt salt och rör om. Låt svalna en stund."
-            ),
-            image = null,
-            url = "https://www.koket.se/salty-caramel-cheesecake-pa-kladdkakebotten"
-        ),
+        recipe = recipe1,
         openUrl = {}
     )
 }
