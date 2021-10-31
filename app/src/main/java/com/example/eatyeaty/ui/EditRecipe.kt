@@ -28,7 +28,8 @@ fun EditRecipe(
             value = value.title,
             onValueChange = { onValueChange(value.copy(title = it)) },
             Modifier.fillMaxWidth(),
-            label = { Text("Title") }
+            label = { Text("Title") },
+            singleLine = true,
         )
 
         Spacer(modifier = Modifier.height(8.dp))

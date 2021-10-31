@@ -34,7 +34,8 @@ fun RecipeUrlDialog(
                 value = url,
                 onValueChange = setUrl,
                 modifier = Modifier.fillMaxWidth(),
-                placeholder = { Text("Optional template URL") }
+                placeholder = { Text("Optional template URL") },
+                singleLine = true,
             )
         },
         buttons = {
