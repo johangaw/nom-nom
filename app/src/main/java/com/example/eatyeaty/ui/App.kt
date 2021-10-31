@@ -27,9 +27,16 @@ fun App(
             composable("list") {
                 val scope = rememberCoroutineScope()
                 var showDialog by remember { mutableStateOf(false) }
-                ListScreen(onCreateClick = {
-                    showDialog = true
-                })
+                ListScreen(
+                    onCreateClick = {
+                        showDialog = true
+                    },
+                    onRecipeEdit = {
+                        // TODO: Navigate til show screen
+                    },
+                    onRecipeSelect = {
+                        // TODO: Navigate til edit screen
+                    })
 
                 if (showDialog)
                     RecipeUrlDialog(
