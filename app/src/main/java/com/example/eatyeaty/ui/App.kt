@@ -1,5 +1,6 @@
 package com.example.eatyeaty.ui
 
+import android.util.Log
 import androidx.compose.runtime.*
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -7,6 +8,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.eatyeaty.repositories.ImageLoader
 import com.example.eatyeaty.repositories.Recipe
 import com.example.eatyeaty.ui.screen.CreateRecipeScreen
+import com.example.eatyeaty.ui.screen.EditRecipeScreen
 import com.example.eatyeaty.ui.screen.ShowRecipeScreen
 import com.example.eatyeaty.ui.theme.EatyEatyTheme
 import kotlinx.coroutines.launch
@@ -15,6 +17,7 @@ abstract class Route(val route: String) {
     class List: Route("list")
     class Create: Route("create")
     class Show: Route("show")
+    class Edit: Route("edit")
 }
 
 
@@ -38,7 +41,8 @@ fun App(
                         showDialog = true
                     },
                     onRecipeEdit = {
-                        // TODO: Navigate til show screen
+                        setRecipe(it)
+                        controller.navigate(Route.Edit().route)
                     },
                     onRecipeSelect = {
                         setRecipe(it)
@@ -64,7 +68,9 @@ fun App(
                                                 null
                                         },
                                         url = it.url
-                                    )
+                                    ).also {
+                                        Log.d(javaClass.simpleName, it.toString())
+                                    }
                                 )
                                 controller.navigate(Route.Create().route)
                             }
@@ -86,6 +92,14 @@ fun App(
                     openUrl = { TODO("Trigger intent to open url") }
                 )
             }
+
+            composable(Route.Edit().route) {
+                EditRecipeScreen(
+                    recipe = recipe,
+                    onRecipeChange = { setRecipe }
+                )
+            }
         }
     }
 }
+
