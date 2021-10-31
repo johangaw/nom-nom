@@ -50,6 +50,8 @@ fun getRecipeDataString(doc: Document): JSONObject? {
         .find { it.has("@type") && it.getString("@type", "") == "Recipe" }
 }
 
+// TODO: handle HowToSection - https://www.arla.se/recept/kladdkaka/?gclid=EAIaIQobChMImPCZ-P708wIVjgyRCh25vgRkEAAYAiAAEgL8R_D_BwE&gclsrc=aw.ds
+// TODO: handle HTML encoded å,ä,ö - https://www.ica.se/recept/klassisk-lasagne-679675/
 fun parseRecipeData(json: JSONObject): RecipeUrlDAO {
     return RecipeUrlDAO(
         title = json.getString("name", ""),
