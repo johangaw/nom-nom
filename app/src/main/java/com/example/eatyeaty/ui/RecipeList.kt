@@ -42,6 +42,7 @@ fun RecipeList(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     ImageWithPlaceholder(
+                        modifier = Modifier.width(100.dp),
                         image = it.image,
                         placeholder = painterResource(R.drawable.recipe_placeholder)
                     )

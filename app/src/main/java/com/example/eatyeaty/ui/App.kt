@@ -7,13 +7,14 @@ import androidx.navigation.compose.rememberNavController
 import com.example.eatyeaty.repositories.ImageLoader
 import com.example.eatyeaty.repositories.Recipe
 import com.example.eatyeaty.ui.screen.CreateRecipeScreen
+import com.example.eatyeaty.ui.screen.ShowRecipeScreen
 import com.example.eatyeaty.ui.theme.EatyEatyTheme
-import com.example.eatyeaty.ui.theme.EditRecipe
 import kotlinx.coroutines.launch
 
 abstract class Route(val route: String) {
     class List: Route("list")
     class Create: Route("create")
+    class Show: Route("show")
 }
 
 
@@ -40,7 +41,8 @@ fun App(
                         // TODO: Navigate til show screen
                     },
                     onRecipeSelect = {
-                        // TODO: Navigate til edit screen
+                        setRecipe(it)
+                        controller.navigate(Route.Show().route)
                     })
 
                 if (showDialog)
@@ -64,7 +66,7 @@ fun App(
                                         url = it.url
                                     )
                                 )
-                                controller.navigate("create")
+                                controller.navigate(Route.Create().route)
                             }
                         }
                     )
@@ -75,6 +77,13 @@ fun App(
                     recipe = recipe,
                     onRecipeChange = setRecipe,
                     onCreateClick = {}
+                )
+            }
+
+            composable(Route.Show().route) {
+                ShowRecipeScreen(
+                    recipe = recipe,
+                    openUrl = { TODO("Trigger intent to open url") }
                 )
             }
         }
