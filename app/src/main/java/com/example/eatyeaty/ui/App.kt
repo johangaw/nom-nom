@@ -12,6 +12,7 @@ import com.example.eatyeaty.ui.screen.EditRecipeScreen
 import com.example.eatyeaty.ui.screen.ShowRecipeScreen
 import com.example.eatyeaty.ui.theme.EatyEatyTheme
 import kotlinx.coroutines.launch
+import kotlin.reflect.KFunction1
 
 abstract class Route(val route: String) {
     class List: Route("list")
@@ -23,7 +24,7 @@ abstract class Route(val route: String) {
 
 @Composable
 fun App(
-
+    openUrl: (url: String) -> Unit,
 ) {
     val controller = rememberNavController()
     val (recipe, setRecipe) = remember {
@@ -89,7 +90,7 @@ fun App(
             composable(Route.Show().route) {
                 ShowRecipeScreen(
                     recipe = recipe,
-                    openUrl = { TODO("Trigger intent to open url") }
+                    openUrl = openUrl
                 )
             }
 

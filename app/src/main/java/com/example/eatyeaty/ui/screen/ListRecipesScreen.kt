@@ -8,6 +8,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.eatyeaty.fixtures.recipe1
+import com.example.eatyeaty.fixtures.recipe2
 import com.example.eatyeaty.repositories.Recipe
 
 @Composable
@@ -25,8 +27,8 @@ fun ListScreen(
     ) {
         RecipeList(
             recipes = listOf(
-                Recipe(title = "Lsange"),
-                Recipe(title = "Pizza"),
+                recipe1,
+                recipe2,
             ),
             onRecipeSelect = onRecipeSelect,
             onRecipeEdit = onRecipeEdit,
