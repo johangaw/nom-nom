@@ -1,5 +1,6 @@
 package com.example.eatyeaty.repositories
 
+import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONArray
@@ -50,30 +51,41 @@ fun getRecipeDataString(doc: Document): JSONObject? {
         .find { it.has("@type") && it.getString("@type", "") == "Recipe" }
 }
 
-// TODO: handle HowToSection - https://www.arla.se/recept/kladdkaka/?gclid=EAIaIQobChMImPCZ-P708wIVjgyRCh25vgRkEAAYAiAAEgL8R_D_BwE&gclsrc=aw.ds
 // TODO: handle HTML encoded å,ä,ö - https://www.ica.se/recept/klassisk-lasagne-679675/
 fun parseRecipeData(json: JSONObject): RecipeUrlDAO {
     return RecipeUrlDAO(
         title = json.getString("name", ""),
-        instructions = json.getJSONArray("recipeInstructions", JSONArray())
-            .iterator()
-            .map {
-                if (it is JSONObject && it.getString("@type", "") == "HowToStep")
-                    it.getString("text", "")
-                else
-                    it.toString()
-            }
-            .flatMap {
-                it
-                    .replace(Regex("<br.*?>"), "\n")
-                    .replace(Regex("<.*?>"), "")
-                    .split("\n")
-            }
-            .toList(),
+        instructions = parseInstructions(json.getJSONArray("recipeInstructions", JSONArray())),
         ingredients = json.getJSONArray("recipeIngredient", JSONArray())
             .iterator()
             .map { it.toString() }
             .toList(),
         imageUrl = json.getString("image", ""),
     )
+}
+
+fun listInstructions(item: Any): List<String> {
+    return when (item) {
+        is JSONArray -> item.iterator().flatMap { listInstructions(it) }
+        is JSONObject -> when(item.getString("@type", "")) {
+                "HowToSection" -> listInstructions(item.getJSONArray("itemListElement"))
+                "HowToStep" -> listInstructions(item.getString("text", ""))
+                else -> listInstructions(item.toString())
+        }
+        is String -> listOf(item)
+        else -> listOf(item.toString()).also {
+            Log.w("listInstructions","No implementation for type: ${item.javaClass.kotlin.qualifiedName}")
+        }
+    }
+}
+
+fun parseInstructions(array: JSONArray): List<String> {
+    return listInstructions(array)
+        .flatMap {
+            it
+                .replace(Regex("<br.*?>"), "\n")
+                .replace(Regex("<.*?>"), "")
+                .split("\n")
+        }
+        .toList()
 }

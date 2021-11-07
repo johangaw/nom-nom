@@ -10,7 +10,8 @@ import org.junit.Test
 
 import org.junit.Assert.*
 
-fun getHTML(json: String): String = """<html><head><script type="application/ld+json">${json}</script></head></html>"""
+fun getHTML(json: String): String =
+    """<html><head><script type="application/ld+json">${json}</script></head></html>"""
 
 class RecipeUrlRepositoryTest {
     @Test
@@ -77,7 +78,8 @@ class RecipeUrlRepositoryTest {
     @Test
     fun `getRecipeDataString -- when the script tag contains an array with one recipe object -- itreturns the recipe JSONObject`() {
         // Arrange
-        val doc = Jsoup.parse(getHTML("""[{"@type": "ugg"}, {"@type": "Recipe", "name": "Klassisk lasagne"}]"""))
+        val doc =
+            Jsoup.parse(getHTML("""[{"@type": "ugg"}, {"@type": "Recipe", "name": "Klassisk lasagne"}]"""))
 
         // Act
         val res = getRecipeDataString(doc)
@@ -131,7 +133,8 @@ class RecipeUrlRepositoryTest {
     fun `parseRecipeData -- when instructions contain HowToSteps -- it returns instructions as strings`() {
         // Arrange
         val input = JSONObject()
-        input.put("recipeInstructions",
+        input.put(
+            "recipeInstructions",
             JSONArray()
                 .put(0, JSONObject().put("@type", "HowToStep").put("text", "Oven on 175"))
                 .put(1, JSONObject().put("@type", "HowToStep").put("text", "Cook stuff"))
@@ -152,10 +155,14 @@ class RecipeUrlRepositoryTest {
     fun `parseRecipeData -- when instructions contain HowToSteps with HTML -- it returns strings without HTML`() {
         // Arrange
         val input = JSONObject()
-        input.put("recipeInstructions",
+        input.put(
+            "recipeInstructions",
             JSONArray()
                 .put(0, JSONObject().put("@type", "HowToStep").put("text", "<b>Oven</b> on 175"))
-                .put(1, JSONObject().put("@type", "HowToStep").put("text", "Insert<br>Cook<br/>stuff"))
+                .put(
+                    1,
+                    JSONObject().put("@type", "HowToStep").put("text", "Insert<br>Cook<br/>stuff")
+                )
         )
         val expected = listOf(
             "Oven on 175",
@@ -166,6 +173,47 @@ class RecipeUrlRepositoryTest {
 
         // Act
         val result = parseRecipeData(input)
+
+        // Assert
+        assertEquals(expected, result.instructions)
+    }
+
+    @Test
+    fun `parseRecipeData -- when instructions contain HowToSection -- it returns a string of the nested content`() {
+        // Arrange
+        val input = JSONObject(
+            """
+            {
+                "@type": "Recipe",
+                "recipeInstructions": [
+                    {
+                        "@type": "HowToSection",
+                        "itemListElement": [
+                            "Step1",
+                            {
+                                "@type": "HowToStep",
+                                "text": "Step2"
+                            }
+                        ]
+                    },
+                    {
+                        "@type": "HowToSection",
+                        "itemListElement": [
+                            {
+                                "@type": "HowToStep",
+                                "text": "Step3"
+                            }
+                        ]
+                    }
+                ]
+            }
+            """.trimIndent()
+        )
+        val expected = listOf("Step1", "Step2", "Step3")
+
+        // Act
+        val result = parseRecipeData(input)
+
 
         // Assert
         assertEquals(expected, result.instructions)
