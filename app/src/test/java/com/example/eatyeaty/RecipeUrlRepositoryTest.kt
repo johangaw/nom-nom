@@ -218,4 +218,29 @@ class RecipeUrlRepositoryTest {
         // Assert
         assertEquals(expected, result.instructions)
     }
+
+    @Test
+    fun `parseRecipeData -- when instructions contains HTML encoded characters -- it returns a decoded string`() {
+        // Arrange
+        val input = JSONObject("""
+            {
+                "recipeInstructions": [
+                    "S&amp;auml;tt ugnen p&amp;aring; 175&amp;deg;C",
+                    "Skala och hacka l&amp;ouml;k och vitl&amp;ouml;k",
+                    "Fr&amp;auml;s f&amp;auml;rs, l&amp;ouml;k och vitl&amp;ouml;k i oljan i en stekpanna"
+                ]
+            }
+        """.trimIndent())
+        val expected = listOf(
+            "Sätt ugnen på 175°C",
+            "Skala och hacka lök och vitlök",
+            "Fräs färs, lök och vitlök i oljan i en stekpanna"
+        )
+
+        // Act
+        val result = parseRecipeData(input)
+
+        // Assert
+        assertEquals(expected, result.instructions)
+    }
 }

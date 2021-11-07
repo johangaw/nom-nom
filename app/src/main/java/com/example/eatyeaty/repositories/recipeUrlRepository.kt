@@ -9,6 +9,7 @@ import org.json.JSONTokener
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
+import android.text.Html
 
 operator fun JSONArray.iterator(): Iterable<Any> =
     (0 until length())
@@ -51,7 +52,6 @@ fun getRecipeDataString(doc: Document): JSONObject? {
         .find { it.has("@type") && it.getString("@type", "") == "Recipe" }
 }
 
-// TODO: handle HTML encoded å,ä,ö - https://www.ica.se/recept/klassisk-lasagne-679675/
 fun parseRecipeData(json: JSONObject): RecipeUrlDAO {
     return RecipeUrlDAO(
         title = json.getString("name", ""),
@@ -85,6 +85,10 @@ fun parseInstructions(array: JSONArray): List<String> {
             it
                 .replace(Regex("<br.*?>"), "\n")
                 .replace(Regex("<.*?>"), "")
+                .replace("&amp;aring;", "å")
+                .replace("&amp;auml;", "ä")
+                .replace("&amp;ouml;", "ö")
+                .replace("&amp;deg;", "°")
                 .split("\n")
         }
         .toList()
