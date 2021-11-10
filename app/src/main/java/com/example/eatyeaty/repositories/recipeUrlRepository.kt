@@ -1,6 +1,7 @@
 package com.example.eatyeaty.repositories
 
 import android.util.Log
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONArray
@@ -9,7 +10,6 @@ import org.json.JSONTokener
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
-import android.text.Html
 
 operator fun JSONArray.iterator(): Iterable<Any> =
     (0 until length())
@@ -27,9 +27,14 @@ fun JSONObject.getJSONArray(key: String, fallback: JSONArray): JSONArray =
 
 suspend fun loadData(url: String): RecipeUrlDAO {
     return withContext(Dispatchers.IO) {
-        getRecipeDataString(Jsoup.connect(url).get())?.let {
-            parseRecipeData(it).copy(url = url)
-        } ?: RecipeUrlDAO()
+        kotlin.runCatching { Jsoup.connect(url).get() }
+            .getOrElse { if(it is CancellationException) throw it else Document("") }
+            .let {
+                getRecipeDataString(it)
+            }
+            ?.let {
+                parseRecipeData(it).copy(url = url)
+            } ?: RecipeUrlDAO()
     }
 }
 
