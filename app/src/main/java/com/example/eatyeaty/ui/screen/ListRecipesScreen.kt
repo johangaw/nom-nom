@@ -1,6 +1,5 @@
 package com.example.eatyeaty.ui
 
-import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
@@ -14,6 +13,7 @@ import com.example.eatyeaty.repositories.Recipe
 
 @Composable
 fun ListScreen(
+    recipes: List<Recipe>,
     onCreateClick: () -> Unit,
     onRecipeSelect: (r: Recipe) -> Unit,
     onRecipeEdit: (r: Recipe) -> Unit,
@@ -26,10 +26,7 @@ fun ListScreen(
         }
     ) {
         RecipeList(
-            recipes = listOf(
-                recipe1,
-                recipe2,
-            ),
+            recipes = recipes,
             onRecipeSelect = onRecipeSelect,
             onRecipeEdit = onRecipeEdit,
         )
@@ -40,6 +37,10 @@ fun ListScreen(
 @Composable
 fun ListScreenPreview() {
     ListScreen(
+        recipes = listOf(
+            recipe1,
+            recipe2,
+        ),
         onCreateClick = {},
         onRecipeSelect = {},
         onRecipeEdit = {},

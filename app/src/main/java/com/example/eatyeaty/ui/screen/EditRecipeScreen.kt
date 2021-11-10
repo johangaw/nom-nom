@@ -14,7 +14,7 @@ import com.example.eatyeaty.repositories.Recipe
 import com.example.eatyeaty.ui.theme.EditRecipe
 
 @Composable
-fun EditRecipeScreen(recipe: Recipe, onRecipeChange: (Recipe) -> Unit) {
+fun EditRecipeScreen(recipe: Recipe, onRecipeChange: (Recipe) -> Unit, loading: Boolean) {
     Surface(Modifier.padding(8.dp)) {
         Column(Modifier.verticalScroll(rememberScrollState())) {
             EditRecipe(value = recipe, onValueChange = onRecipeChange)

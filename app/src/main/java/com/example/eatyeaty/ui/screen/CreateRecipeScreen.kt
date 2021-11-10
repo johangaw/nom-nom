@@ -8,15 +8,20 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.eatyeaty.fixtures.recipe1
 import com.example.eatyeaty.repositories.Recipe
+import com.example.eatyeaty.ui.SplashLoader
+import com.example.eatyeaty.ui.theme.EatyEatyTheme
 import com.example.eatyeaty.ui.theme.EditRecipe
 
 @Composable
 fun CreateRecipeScreen(
     recipe: Recipe,
     onRecipeChange: (recipe: Recipe) -> Unit,
-    onCreateClick: () -> Unit
+    onCreateClick: () -> Unit,
+    loading: Boolean
 ) {
     Surface(Modifier.padding(8.dp)) {
         Column(
@@ -29,5 +34,35 @@ fun CreateRecipeScreen(
             }
             Spacer(modifier = Modifier.height(16.dp))
         }
+
+        if (loading)
+            SplashLoader()
+    }
+}
+
+
+@Preview
+@Composable
+fun CreateRecipeScreenPreview__whenLoading() {
+    EatyEatyTheme {
+        CreateRecipeScreen(
+            recipe = recipe1,
+            onRecipeChange = {},
+            onCreateClick = { },
+            loading = true
+        )
+    }
+}
+
+@Preview
+@Composable
+fun CreateRecipeScreenPreview() {
+    EatyEatyTheme {
+        CreateRecipeScreen(
+            recipe = recipe1,
+            onRecipeChange = {},
+            onCreateClick = { },
+            loading = false
+        )
     }
 }

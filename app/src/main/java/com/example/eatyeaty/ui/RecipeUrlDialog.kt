@@ -20,9 +20,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun RecipeUrlDialog(
     onDismissRequest: () -> Unit,
-    onSuccess: (dao: RecipeUrlDAO) -> Unit
+    onSuccess: (url: String) -> Unit
 ) {
-    val scope = rememberCoroutineScope()
     val (url, setUrl) = remember {
         mutableStateOf("")
     }
@@ -44,15 +43,7 @@ fun RecipeUrlDialog(
             ) {
                 Button(
                     modifier = Modifier.fillMaxWidth(),
-                    onClick = {
-                        scope.launch {
-                            if (url.isNotEmpty()) {
-                                onSuccess(loadData(url))
-                            } else {
-                                onSuccess(RecipeUrlDAO())
-                            }
-                        }
-                    }
+                    onClick = { onSuccess(url) }
                 ) {
                     Text("Create")
                 }
