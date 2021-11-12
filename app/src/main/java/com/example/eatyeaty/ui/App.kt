@@ -7,7 +7,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.eatyeaty.data.AppViewModel
+import com.example.eatyeaty.data.RecipeListViewModel
+import com.example.eatyeaty.data.EditRecipeViewModel
 import com.example.eatyeaty.repositories.Recipe
 import com.example.eatyeaty.repositories.loadData
 import com.example.eatyeaty.repositories.toRecipe
@@ -58,7 +59,8 @@ sealed class Route(val route: String) {
 @Composable
 fun App(
     openUrl: (url: String) -> Unit,
-    appModel: AppViewModel,
+    recipeListModel: RecipeListViewModel,
+    editModel: EditRecipeViewModel,
 ) {
     val controller = rememberNavController()
 
@@ -66,7 +68,7 @@ fun App(
         NavHost(navController = controller, startDestination = Route.List.route) {
 
             composable(Route.List.route) {
-                val recipes by appModel.recipes.observeAsState(listOf())
+                val recipes by recipeListModel.recipes.observeAsState(listOf())
 
                 var showDialog by remember { mutableStateOf(false) }
                 ListScreen(
@@ -105,8 +107,9 @@ fun App(
                     loading = loading,
                     recipe = recipe,
                     onRecipeChange = setRecipe,
+                    requestGalleryImage = editModel::requestGalleryImage,
                     onCreateClick = {
-                        appModel.createRecipe(recipe)
+                        editModel.createRecipe(recipe)
                         controller.navigate(Route.Show.link(recipe)) {
                             popUpTo(Route.List.route)
                         }
@@ -115,12 +118,12 @@ fun App(
             }
 
             composable(Route.Show.route) { backStackEntry ->
-                var recipe by remember { mutableStateOf(Recipe()) }
+                val recipe by editModel.recipe.observeAsState(Recipe())
                 var loading by remember { mutableStateOf(true) }
                 val recipeId = Route.Show.parseId(backStackEntry)
                 LaunchedEffect(recipeId) {
                     loading = true
-                    recipe = appModel.getRecipe(recipeId) ?: Recipe()  // TODO show error on failure
+                    editModel.selectRecipe(recipeId)
                     loading = false
                 }
 
@@ -132,21 +135,23 @@ fun App(
             }
 
             composable(Route.Edit.route) { backStackEntry ->
-                var recipe by remember { mutableStateOf(Recipe()) }
+                val recipe by editModel.recipe.observeAsState(Recipe())
                 var loading by remember { mutableStateOf(true) }
                 val recipeId = Route.Edit.parseId(backStackEntry)
                 LaunchedEffect(recipeId) {
                     loading = true
-                    recipe = appModel.getRecipe(recipeId) ?: Recipe()  // TODO show error on failure
+                    editModel.selectRecipe(recipeId)
                     loading = false
                 }
 
                 EditRecipeScreen(
-                    loading = loading,
                     recipe = recipe,
                     onRecipeChange = {
-                        recipe = it
-                        appModel.updateRecipe(it)
+                        editModel.updateRecipe(it)
+                    },
+                    loading = loading,
+                    requestGalleryImage = {
+                        editModel.requestGalleryImage()
                     }
                 )
             }

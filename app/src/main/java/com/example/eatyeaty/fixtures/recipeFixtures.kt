@@ -1,5 +1,6 @@
 package com.example.eatyeaty.fixtures
 
+import com.example.eatyeaty.repositories.ImageModel
 import com.example.eatyeaty.repositories.Recipe
 
 
@@ -22,7 +23,6 @@ internal val recipe1: Recipe =
             "Salty caramel",
             "Värm sockret på med medelhög värme i en kastrull. Rör om hela tiden tills allt socker har smält (sockret kommer hårdna och bli till små kristaller men den kommer att smälta, se bara till att sockret ej bränns). Tillsätt smöret och låt allt gå ihop. Häll i grädden och låt koka under omrörning i ca 1-2 minuter eller tills härligt seg rinnande och fin färg. Tillsätt salt och rör om. Låt svalna en stund."
         ),
-        image = null,
         url = "https://www.koket.se/salty-caramel-cheesecake-pa-kladdkakebotten"
     )
 

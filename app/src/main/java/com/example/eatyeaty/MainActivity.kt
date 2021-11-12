@@ -7,20 +7,29 @@ import com.example.eatyeaty.ui.App
 import android.content.Intent
 import android.net.Uri
 import androidx.activity.viewModels
-import com.example.eatyeaty.data.AppViewModel
+import com.example.eatyeaty.data.RecipeListViewModel
+import com.example.eatyeaty.data.EditRecipeViewModel
+import com.example.eatyeaty.services.ImageDecoder
 
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val model: AppViewModel by viewModels()
+        val recipeListModel: RecipeListViewModel by viewModels()
 
+        val imagePicker = ImagePickerLifecycleObserver(this.activityResultRegistry)
+        lifecycle.addObserver(imagePicker)
+        val editModel: EditRecipeViewModel by viewModels {
+            val imageDecoder = ImageDecoder(this.contentResolver)
+            EditRecipeViewModel.ViewModelFactory(imagePicker, imageDecoder)
+        }
 
         setContent {
             App(
                 openUrl = this::openUrl,
-                appModel = model
+                recipeListModel = recipeListModel,
+                editModel = editModel,
             )
         }
     }

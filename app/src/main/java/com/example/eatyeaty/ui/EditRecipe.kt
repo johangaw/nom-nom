@@ -1,12 +1,19 @@
 package com.example.eatyeaty.ui.theme
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -18,6 +25,7 @@ import com.example.eatyeaty.ui.ImageWithPlaceholder
 fun EditRecipe(
     value: Recipe,
     onValueChange: (r: Recipe) -> Unit,
+    requestGalleryImage: () -> Unit,
 ) {
     Column() {
         OutlinedTextField(
@@ -30,13 +38,29 @@ fun EditRecipe(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        ImageWithPlaceholder(
+        Box(
             modifier = Modifier
                 .height(200.dp)
-                .fillMaxWidth(),
-            value.image,
-            painterResource(id = R.drawable.recipe_placeholder),
-        )
+                .fillMaxWidth()
+        ) {
+            ImageWithPlaceholder(
+                modifier = Modifier.fillMaxSize(),
+                value.image,
+                painterResource(id = R.drawable.recipe_placeholder),
+            )
+            Row(
+                Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.8f)),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                IconButton(onClick = {}) {
+                    Icon(Icons.Default.CameraAlt, contentDescription = "", Modifier.size(100.dp), Color.White)
+                }
+                IconButton(onClick = requestGalleryImage) {
+                    Icon(Icons.Default.PhotoAlbum, contentDescription = "", Modifier.size(100.dp), Color.White)
+                }
+            }
+        }
 
         Spacer(modifier = Modifier.height(8.dp))
 
@@ -82,6 +106,7 @@ fun EditRecipePreview() {
         EditRecipe(
             value = recipe,
             onValueChange = setRecipe,
+            requestGalleryImage = {}
         )
     }
 }
