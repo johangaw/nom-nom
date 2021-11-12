@@ -1,4 +1,4 @@
-package com.example.eatyeaty.ui.theme
+package com.example.eatyeaty.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -19,7 +19,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.eatyeaty.R
 import com.example.eatyeaty.repositories.Recipe
-import com.example.eatyeaty.ui.ImageWithPlaceholder
+import com.example.eatyeaty.ui.theme.EatyEatyTheme
 
 @Composable
 fun EditRecipe(
@@ -27,7 +27,7 @@ fun EditRecipe(
     onValueChange: (r: Recipe) -> Unit,
     requestGalleryImage: () -> Unit,
 ) {
-    Column() {
+    Column {
         OutlinedTextField(
             value = value.title,
             onValueChange = { onValueChange(value.copy(title = it)) },

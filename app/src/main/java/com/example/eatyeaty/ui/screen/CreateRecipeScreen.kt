@@ -14,7 +14,7 @@ import com.example.eatyeaty.fixtures.recipe1
 import com.example.eatyeaty.repositories.Recipe
 import com.example.eatyeaty.ui.SplashLoader
 import com.example.eatyeaty.ui.theme.EatyEatyTheme
-import com.example.eatyeaty.ui.theme.EditRecipe
+import com.example.eatyeaty.ui.EditRecipe
 
 @Composable
 fun CreateRecipeScreen(

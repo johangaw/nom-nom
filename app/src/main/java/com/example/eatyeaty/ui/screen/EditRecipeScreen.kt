@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.eatyeaty.repositories.Recipe
 import com.example.eatyeaty.ui.SplashLoader
-import com.example.eatyeaty.ui.theme.EditRecipe
+import com.example.eatyeaty.ui.EditRecipe
 
 @Composable
 fun EditRecipeScreen(
