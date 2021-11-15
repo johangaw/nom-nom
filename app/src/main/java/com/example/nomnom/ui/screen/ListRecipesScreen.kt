@@ -9,7 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.nomnom.fixtures.recipe1
 import com.example.nomnom.fixtures.recipe2
-import com.example.nomnom.repositories.Recipe
+import com.example.nomnom.data.Recipe
 
 @Composable
 fun ListScreen(

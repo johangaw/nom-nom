@@ -2,6 +2,7 @@ package com.example.nomnom.ui
 
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -9,13 +10,15 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.nomnom.data.RecipeListViewModel
 import com.example.nomnom.data.EditRecipeViewModel
-import com.example.nomnom.repositories.Recipe
+import com.example.nomnom.data.Recipe
+import com.example.nomnom.data.asRecipe
 import com.example.nomnom.repositories.loadData
-import com.example.nomnom.repositories.toRecipe
+import com.example.nomnom.services.ImageLoader
 import com.example.nomnom.ui.screen.CreateRecipeScreen
 import com.example.nomnom.ui.screen.EditRecipeScreen
 import com.example.nomnom.ui.screen.ShowRecipeScreen
 import com.example.nomnom.ui.theme.NomNomTheme
+import kotlinx.coroutines.launch
 import java.net.URLDecoder
 import java.net.URLEncoder
 
@@ -36,7 +39,7 @@ sealed class Route(val route: String) {
 
     object Show : Route("show/{id}") {
         fun link(recipe: Recipe): String {
-            return this.route.replace("{id}", recipe.id)
+            return this.route.replace("{id}", recipe.id.toString())
         }
 
         fun parseId(backStackEntry: NavBackStackEntry): String {
@@ -46,7 +49,7 @@ sealed class Route(val route: String) {
 
     object Edit : Route("edit/{id}") {
         fun link(recipe: Recipe): String {
-            return this.route.replace("{id}", recipe.id)
+            return this.route.replace("{id}", recipe.id.toString())
         }
 
         fun parseId(backStackEntry: NavBackStackEntry): String {
@@ -68,7 +71,7 @@ fun App(
         NavHost(navController = controller, startDestination = Route.List.route) {
 
             composable(Route.List.route) {
-                val recipes by recipeListModel.recipes.observeAsState(listOf())
+                val recipes by recipeListModel.recipes.collectAsState(listOf())
 
                 var showDialog by remember { mutableStateOf(false) }
                 ListScreen(
@@ -93,26 +96,36 @@ fun App(
             }
 
             composable(Route.Create.route, Route.Create.arguments) { backStackEntry ->
-                val (recipe, setRecipe) = remember { mutableStateOf(Recipe()) }
+                val recipe by editModel.recipe.observeAsState(Recipe())
                 var loading by remember { mutableStateOf(true) }
                 val recipeUrl = Route.Create.parseUrl(backStackEntry)
+                val context = LocalContext.current
+                val scope = rememberCoroutineScope()
 
                 LaunchedEffect(recipeUrl) {
                     loading = true
-                    setRecipe(loadData(recipeUrl).toRecipe())
+                    val recipeDAO = loadData(recipeUrl)
+                    val imageUri =
+                        runCatching { ImageLoader.getInstance().fetchAndStore(context, recipeDAO.imageUrl) }
+                            .map { it.toString() }
+                            .getOrDefault("")
+                    editModel.updateRecipe(recipeDAO.asRecipe(imageUri))
                     loading = false
                 }
 
                 CreateRecipeScreen(
                     loading = loading,
                     recipe = recipe,
-                    onRecipeChange = setRecipe,
+                    onRecipeChange = editModel::updateRecipe,
                     requestGalleryImage = editModel::requestGalleryImage,
                     requestCameraImage = editModel::requestCameraImage,
                     onCreateClick = {
-                        editModel.createRecipe(recipe)
-                        controller.navigate(Route.Show.link(recipe)) {
-                            popUpTo(Route.List.route)
+                        scope.launch {
+                            loading = true
+                            val newRecipe = editModel.createRecipe(recipe)
+                            controller.navigate(Route.Show.link(newRecipe)) {
+                                popUpTo(Route.List.route)
+                            }
                         }
                     }
                 )

@@ -10,7 +10,7 @@ import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.nomnom.repositories.Recipe
+import com.example.nomnom.data.Recipe
 import com.example.nomnom.ui.SplashLoader
 import com.example.nomnom.ui.EditRecipe
 

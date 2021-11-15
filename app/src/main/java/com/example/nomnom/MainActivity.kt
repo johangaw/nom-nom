@@ -9,6 +9,7 @@ import android.net.Uri
 import androidx.activity.viewModels
 import com.example.nomnom.data.RecipeListViewModel
 import com.example.nomnom.data.EditRecipeViewModel
+import com.example.nomnom.repositories.RecipeDatabase
 import com.example.nomnom.services.ImageDecoder
 
 
@@ -16,13 +17,21 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val recipeListModel: RecipeListViewModel by viewModels()
+        val recipeListModel: RecipeListViewModel by viewModels {
+            RecipeListViewModel.ViewModelFactory(
+                RecipeDatabase.getInstance(this).recipeRepository()
+            )
+        }
 
         val imagePicker = ImagePickerLifecycleObserver(this, this.activityResultRegistry)
         lifecycle.addObserver(imagePicker)
         val editModel: EditRecipeViewModel by viewModels {
             val imageDecoder = ImageDecoder(this.contentResolver)
-            EditRecipeViewModel.ViewModelFactory(imagePicker, imageDecoder)
+            EditRecipeViewModel.ViewModelFactory(
+                imagePicker,
+                imageDecoder,
+                RecipeDatabase.getInstance(this).recipeRepository()
+            )
         }
 
         setContent {

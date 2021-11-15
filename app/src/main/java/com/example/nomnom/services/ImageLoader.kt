@@ -1,7 +1,8 @@
 package com.example.nomnom.services
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
+import android.content.Context
+import android.net.Uri
+import androidx.core.net.toUri
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.net.URL
@@ -9,10 +10,16 @@ import java.net.URL
 
 class ImageLoader {
 
-    suspend fun load(url: String): Bitmap {
+    suspend fun fetchAndStore(context: Context, url: String): Uri  {
         return withContext(Dispatchers.IO) {
+            val dst = createImageFile(context)
             val input = URL(url).openStream()
-            BitmapFactory.decodeStream(input)
+            input.use {
+                dst.outputStream().use { output ->
+                    input.copyTo(output)
+                }
+            }
+            dst.toUri()
         }
     }
 

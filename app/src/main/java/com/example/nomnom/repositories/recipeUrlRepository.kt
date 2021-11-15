@@ -2,6 +2,7 @@ package com.example.nomnom.repositories
 
 import android.util.Log
 import com.example.nomnom.data.RecipeUrlDAO
+import com.example.nomnom.services.throwOnCancellation
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -29,13 +30,11 @@ fun JSONObject.getJSONArray(key: String, fallback: JSONArray): JSONArray =
 suspend fun loadData(url: String): RecipeUrlDAO {
     return withContext(Dispatchers.IO) {
         kotlin.runCatching { Jsoup.connect(url).get() }
-            .getOrElse { if(it is CancellationException) throw it else Document("") }
-            .let {
-                getRecipeDataString(it)
-            }
-            ?.let {
-                parseRecipeData(it).copy(url = url)
-            } ?: RecipeUrlDAO()
+            .throwOnCancellation()
+            .recover { Document("") }
+            .mapCatching { checkNotNull(getRecipeDataString(it)) }
+            .map { parseRecipeData(it).copy(url = url) }
+            .getOrDefault( RecipeUrlDAO())
     }
 }
 
@@ -73,14 +72,17 @@ fun parseRecipeData(json: JSONObject): RecipeUrlDAO {
 fun listInstructions(item: Any): List<String> {
     return when (item) {
         is JSONArray -> item.iterator().flatMap { listInstructions(it) }
-        is JSONObject -> when(item.getString("@type", "")) {
-                "HowToSection" -> listInstructions(item.getJSONArray("itemListElement"))
-                "HowToStep" -> listInstructions(item.getString("text", ""))
-                else -> listInstructions(item.toString())
+        is JSONObject -> when (item.getString("@type", "")) {
+            "HowToSection" -> listInstructions(item.getJSONArray("itemListElement"))
+            "HowToStep" -> listInstructions(item.getString("text", ""))
+            else -> listInstructions(item.toString())
         }
         is String -> listOf(item)
         else -> listOf(item.toString()).also {
-            Log.w("listInstructions","No implementation for type: ${item.javaClass.kotlin.qualifiedName}")
+            Log.w(
+                "listInstructions",
+                "No implementation for type: ${item.javaClass.kotlin.qualifiedName}"
+            )
         }
     }
 }

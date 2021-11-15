@@ -5,7 +5,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.example.nomnom.repositories.Recipe
+import com.example.nomnom.data.Recipe
 import com.example.nomnom.ui.ShowRecipe
 import com.example.nomnom.ui.SplashLoader
 

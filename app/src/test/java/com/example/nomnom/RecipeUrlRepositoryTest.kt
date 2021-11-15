@@ -1,6 +1,6 @@
 package com.example.nomnom
 
-import com.example.nomnom.repositories.RecipeUrlDAO
+import com.example.nomnom.data.RecipeUrlDAO
 import com.example.nomnom.repositories.getRecipeDataString
 import com.example.nomnom.repositories.parseRecipeData
 import org.json.JSONArray

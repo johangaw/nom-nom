@@ -5,6 +5,7 @@ import com.example.nomnom.data.Recipe
 
 internal val recipe1: Recipe =
     Recipe(
+        id = 1000,
         title = "Salty caramel cheesecake på kladdkakebotten",
         ingredients = listOf(
             "Kladdkakabotten",
@@ -26,6 +27,7 @@ internal val recipe1: Recipe =
     )
 
 internal val recipe2 = Recipe(
+    id = 1001,
     url = "https://www.arla.se/recept/kladdkaka/?gclid=EAIaIQobChMImPCZ-P708wIVjgyRCh25vgRkEAAYAiAAEgL8R_D_BwE&gclsrc=aw.ds",
     title = "Kladdkaka",
     instructions = listOf(

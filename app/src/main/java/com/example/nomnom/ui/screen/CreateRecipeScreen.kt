@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.nomnom.fixtures.recipe1
-import com.example.nomnom.repositories.Recipe
+import com.example.nomnom.data.Recipe
 import com.example.nomnom.ui.SplashLoader
 import com.example.nomnom.ui.theme.NomNomTheme
 import com.example.nomnom.ui.EditRecipe

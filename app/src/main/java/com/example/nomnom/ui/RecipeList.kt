@@ -12,7 +12,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.nomnom.R
-import com.example.nomnom.repositories.Recipe
+import com.example.nomnom.data.Recipe
 
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -43,7 +43,7 @@ fun RecipeList(
                 ) {
                     ImageWithPlaceholder(
                         modifier = Modifier.width(100.dp),
-                        image = it.image,
+                        uri = it.imageUri,
                         placeholder = painterResource(R.drawable.recipe_placeholder)
                     )
                     Spacer(modifier = Modifier.width(16.dp))

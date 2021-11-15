@@ -14,7 +14,7 @@ class RecipeRepository {
 
     fun observeAll(): LiveData<List<Recipe>> = recipes
 
-    fun getOne(id: String): Recipe? {
+    fun getOne(id: Int): Recipe? {
         return recipes.value?.find { it.id == id }
     }
 
