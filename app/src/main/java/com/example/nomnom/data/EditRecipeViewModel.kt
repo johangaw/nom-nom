@@ -6,8 +6,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.nomnom.IImagePickerLifecycleObserver
-import com.example.nomnom.repositories.ImageModel
-import com.example.nomnom.repositories.Recipe
 import com.example.nomnom.repositories.RecipeRepository
 import com.example.nomnom.services.IImageDecoder
 import com.example.nomnom.services.ImageDecoder

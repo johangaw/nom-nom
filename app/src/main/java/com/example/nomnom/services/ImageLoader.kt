@@ -1,4 +1,4 @@
-package com.example.nomnom.repositories
+package com.example.nomnom.services
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory

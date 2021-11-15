@@ -1,6 +1,7 @@
 package com.example.nomnom.repositories
 
 import android.util.Log
+import com.example.nomnom.data.RecipeUrlDAO
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

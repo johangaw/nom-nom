@@ -2,6 +2,7 @@ package com.example.nomnom.repositories
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.example.nomnom.data.Recipe
 import com.example.nomnom.fixtures.recipe1
 import com.example.nomnom.fixtures.recipe2
 

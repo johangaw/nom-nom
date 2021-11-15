@@ -1,6 +1,6 @@
 package com.example.nomnom.fixtures
 
-import com.example.nomnom.repositories.Recipe
+import com.example.nomnom.data.Recipe
 
 
 internal val recipe1: Recipe =

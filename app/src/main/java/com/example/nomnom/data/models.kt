@@ -1,6 +1,7 @@
-package com.example.nomnom.repositories
+package com.example.nomnom.data
 
 import android.graphics.Bitmap
+import com.example.nomnom.services.ImageLoader
 import java.util.*
 
 data class RecipeUrlDAO(
