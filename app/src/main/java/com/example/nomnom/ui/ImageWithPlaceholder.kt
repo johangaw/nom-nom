@@ -60,7 +60,7 @@ fun ImageWithPlaceholder(
     val image = rememberImage(uri)
 
     when {
-        image.loading -> SplashLoader()
+        image.loading -> SplashLoader(modifier)
         image.bitmap != null -> Image(
             modifier = modifier,
             bitmap = image.bitmap.asImageBitmap(),
