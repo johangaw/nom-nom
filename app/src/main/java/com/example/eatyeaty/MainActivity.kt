@@ -18,7 +18,7 @@ class MainActivity : ComponentActivity() {
 
         val recipeListModel: RecipeListViewModel by viewModels()
 
-        val imagePicker = ImagePickerLifecycleObserver(this.activityResultRegistry)
+        val imagePicker = ImagePickerLifecycleObserver(this, this.activityResultRegistry)
         lifecycle.addObserver(imagePicker)
         val editModel: EditRecipeViewModel by viewModels {
             val imageDecoder = ImageDecoder(this.contentResolver)

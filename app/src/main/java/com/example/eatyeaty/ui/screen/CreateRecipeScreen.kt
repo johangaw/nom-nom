@@ -22,7 +22,8 @@ fun CreateRecipeScreen(
     onRecipeChange: (recipe: Recipe) -> Unit,
     onCreateClick: () -> Unit,
     requestGalleryImage: () -> Unit,
-    loading: Boolean
+    requestCameraImage: () -> Unit,
+    loading: Boolean,
 ) {
     Surface(Modifier.padding(8.dp)) {
         Column(
@@ -31,7 +32,8 @@ fun CreateRecipeScreen(
             EditRecipe(
                 value = recipe,
                 onValueChange = onRecipeChange,
-                requestGalleryImage = requestGalleryImage
+                requestGalleryImage = requestGalleryImage,
+                requestCameraImage = requestCameraImage
             )
             Spacer(modifier = Modifier.height(16.dp))
             Button(onClick = onCreateClick, Modifier.fillMaxWidth()) {
@@ -54,8 +56,9 @@ fun CreateRecipeScreenPreview__whenLoading() {
             recipe = recipe1,
             onRecipeChange = {},
             onCreateClick = { },
+            requestGalleryImage = {},
+            requestCameraImage = {},
             loading = true,
-            requestGalleryImage = {}
         )
     }
 }
@@ -68,8 +71,9 @@ fun CreateRecipeScreenPreview() {
             recipe = recipe1,
             onRecipeChange = {},
             onCreateClick = { },
+            requestGalleryImage = {},
+            requestCameraImage = {},
             loading = false,
-            requestGalleryImage = {}
         )
     }
 }

@@ -43,6 +43,10 @@ class EditRecipeViewModel(
         imagePicker.pickGalleryImage()
     }
 
+    fun requestCameraImage() {
+        imagePicker.pickCameraImage()
+    }
+
     private fun imageSelected(uri: Uri) {
         _recipe.value?.let {
             val recipe = it.copy(

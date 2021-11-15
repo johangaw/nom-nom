@@ -108,6 +108,7 @@ fun App(
                     recipe = recipe,
                     onRecipeChange = setRecipe,
                     requestGalleryImage = editModel::requestGalleryImage,
+                    requestCameraImage = editModel::requestCameraImage,
                     onCreateClick = {
                         editModel.createRecipe(recipe)
                         controller.navigate(Route.Show.link(recipe)) {
@@ -150,9 +151,8 @@ fun App(
                         editModel.updateRecipe(it)
                     },
                     loading = loading,
-                    requestGalleryImage = {
-                        editModel.requestGalleryImage()
-                    }
+                    requestGalleryImage = editModel::requestGalleryImage,
+                    requestCameraImage = editModel::requestCameraImage,
                 )
             }
         }

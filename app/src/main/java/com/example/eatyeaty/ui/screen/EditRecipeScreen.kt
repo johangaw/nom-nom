@@ -19,14 +19,17 @@ fun EditRecipeScreen(
     recipe: Recipe,
     onRecipeChange: (Recipe) -> Unit,
     loading: Boolean,
-    requestGalleryImage: () -> Unit
+    requestGalleryImage: () -> Unit,
+    requestCameraImage: () -> Unit,
 ) {
     Surface(Modifier.padding(8.dp)) {
         Column(Modifier.verticalScroll(rememberScrollState())) {
             EditRecipe(
                 value = recipe,
                 onValueChange = onRecipeChange,
-                requestGalleryImage = requestGalleryImage
+                requestGalleryImage = requestGalleryImage,
+                requestCameraImage = requestCameraImage,
+
             )
             Spacer(modifier = Modifier.height(16.dp))
         }

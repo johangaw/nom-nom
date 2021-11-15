@@ -26,6 +26,7 @@ fun EditRecipe(
     value: Recipe,
     onValueChange: (r: Recipe) -> Unit,
     requestGalleryImage: () -> Unit,
+    requestCameraImage: () -> Unit,
 ) {
     Column {
         OutlinedTextField(
@@ -49,15 +50,27 @@ fun EditRecipe(
                 painterResource(id = R.drawable.recipe_placeholder),
             )
             Row(
-                Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.8f)),
+                Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.8f)),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                IconButton(onClick = {}) {
-                    Icon(Icons.Default.CameraAlt, contentDescription = "", Modifier.size(100.dp), Color.White)
+                IconButton(onClick = requestCameraImage) {
+                    Icon(
+                        Icons.Default.CameraAlt,
+                        contentDescription = "",
+                        Modifier.size(100.dp),
+                        Color.White
+                    )
                 }
                 IconButton(onClick = requestGalleryImage) {
-                    Icon(Icons.Default.PhotoAlbum, contentDescription = "", Modifier.size(100.dp), Color.White)
+                    Icon(
+                        Icons.Default.PhotoAlbum,
+                        contentDescription = "",
+                        Modifier.size(100.dp),
+                        Color.White
+                    )
                 }
             }
         }
@@ -106,7 +119,8 @@ fun EditRecipePreview() {
         EditRecipe(
             value = recipe,
             onValueChange = setRecipe,
-            requestGalleryImage = {}
+            requestGalleryImage = {},
+            requestCameraImage = {},
         )
     }
 }
