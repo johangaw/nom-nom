@@ -7,7 +7,7 @@ android {
     compileSdk 31
 
     defaultConfig {
-        applicationId "com.example.eatyeaty"
+        applicationId "com.example.npmnom"
         minSdk 29
         targetSdk 30
         versionCode 1

@@ -1,4 +1,4 @@
 <resources>
-    <string name="app_name">EatyEaty</string>
+    <string name="app_name">NomNom</string>
     <string name="take_picture_authorities">com.example.android.fileprovider</string>
 </resources>
