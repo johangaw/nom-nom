@@ -162,6 +162,8 @@ fun App(
                 val recipe by editModel.recipe.observeAsState(Recipe())
                 var loading by remember { mutableStateOf(true) }
                 val recipeId = Route.Edit.parseId(backStackEntry)
+                val scope = rememberCoroutineScope()
+
                 LaunchedEffect(recipeId) {
                     loading = true
                     editModel.selectRecipe(recipeId)
@@ -176,6 +178,15 @@ fun App(
                     loading = loading,
                     requestGalleryImage = editModel::requestGalleryImage,
                     requestCameraImage = editModel::requestCameraImage,
+                    onRecipeDelete = {
+                        scope.launch {
+                            editModel.delete(it)
+                            controller.navigate(Route.List.route) {
+                                popUpTo(Route.List.route)
+                                launchSingleTop = true
+                            }
+                        }
+                    }
                 )
             }
         }
