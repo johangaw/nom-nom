@@ -1,8 +1,11 @@
 package com.example.nomnom.ui
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
+import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.compose.NavHost
@@ -68,126 +71,144 @@ fun App(
     editModel: EditRecipeViewModel,
 ) {
     val controller = rememberNavController()
+    val scaffoldState = rememberScaffoldState()
 
     NomNomTheme {
-        NavHost(navController = controller, startDestination = Route.List.route) {
+        Scaffold(
+            scaffoldState = scaffoldState,
+            snackbarHost = {
+                SnackbarHost(it) { data ->
+                    Snackbar(
+                        backgroundColor = MaterialTheme.colors.error,
+                        snackbarData = data
+                    )
+                }
+            },
+        ) {
+            NavHost(navController = controller, startDestination = Route.List.route) {
 
-            composable(Route.List.route) {
-                val recipes by recipeListModel.recipes.collectAsState(listOf())
+                composable(Route.List.route) {
+                    val recipes by recipeListModel.recipes.collectAsState(listOf())
 
-                var showDialog by remember { mutableStateOf(false) }
-                ListScreen(
-                    recipes = recipes,
-                    onCreateClick = {
-                        showDialog = true
-                    },
-                    onRecipeEdit = {
-                        controller.navigate(Route.Edit.link(it))
-                    },
-                    onRecipeSelect = {
-                        controller.navigate(Route.Show.link(it))
-                    })
+                    var showDialog by remember { mutableStateOf(false) }
+                    ListScreen(
+                        recipes = recipes,
+                        onCreateClick = {
+                            showDialog = true
+                        },
+                        onRecipeEdit = {
+                            controller.navigate(Route.Edit.link(it))
+                        },
+                        onRecipeSelect = {
+                            controller.navigate(Route.Show.link(it))
+                        })
 
-                if (showDialog)
-                    RecipeUrlDialog(
-                        onDismissRequest = { showDialog = false },
-                        onSuccess = {
-                            controller.navigate(Route.Create.link(it))
+                    if (showDialog)
+                        RecipeUrlDialog(
+                            onDismissRequest = { showDialog = false },
+                            onSuccess = {
+                                controller.navigate(Route.Create.link(it))
+                            }
+                        )
+                }
+
+                composable(Route.Create.route, Route.Create.arguments) { backStackEntry ->
+                    val recipe by editModel.recipe.observeAsState(Recipe())
+                    var loading by remember { mutableStateOf(true) }
+                    val recipeUrl = Route.Create.parseUrl(backStackEntry)
+                    val context = LocalContext.current
+                    val scope = rememberCoroutineScope()
+
+                    LaunchedEffect(recipeUrl) {
+                        loading = true
+                        val recipeDAO = loadData(recipeUrl)
+                        val imageUri =
+                            runCatching { fetchAndStore(context)(recipeDAO.imageUrl) }
+                                .throwOnCancellation()
+                                .map { it.toString() }
+                                .getOrElse {
+                                    scope.launch {
+                                        scaffoldState.snackbarHostState.showSnackbar("Unable to load data from url...")
+                                    }
+                                    ""
+                                }
+                        editModel.updateRecipe(recipeDAO.asRecipe(imageUri))
+                        loading = false
+                    }
+
+                    BackHandler {
+                        scope.launch {
+                            editModel.delete(recipe)
+                            controller.popBackStack()
+                        }
+                    }
+
+                    CreateRecipeScreen(
+                        loading = loading,
+                        recipe = recipe,
+                        onRecipeChange = editModel::updateRecipe,
+                        requestGalleryImage = editModel::requestGalleryImage,
+                        requestCameraImage = editModel::requestCameraImage,
+                        onCreateClick = {
+                            scope.launch {
+                                loading = true
+                                val newRecipe = editModel.createRecipe(recipe)
+                                controller.navigate(Route.Show.link(newRecipe)) {
+                                    popUpTo(Route.List.route)
+                                }
+                            }
                         }
                     )
-            }
-
-            composable(Route.Create.route, Route.Create.arguments) { backStackEntry ->
-                val recipe by editModel.recipe.observeAsState(Recipe())
-                var loading by remember { mutableStateOf(true) }
-                val recipeUrl = Route.Create.parseUrl(backStackEntry)
-                val context = LocalContext.current
-                val scope = rememberCoroutineScope()
-
-                LaunchedEffect(recipeUrl) {
-                    loading = true
-                    val recipeDAO = loadData(recipeUrl)
-                    val imageUri =
-                        runCatching { fetchAndStore(context)(recipeDAO.imageUrl) }
-                            .throwOnCancellation()
-                            .map { it.toString() }
-                            .getOrDefault("")
-                    editModel.updateRecipe(recipeDAO.asRecipe(imageUri))
-                    loading = false
                 }
 
-                BackHandler {
-                    scope.launch {
-                        editModel.delete(recipe)
-                        controller.popBackStack()
+                composable(Route.Show.route) { backStackEntry ->
+                    val recipe by editModel.recipe.observeAsState(Recipe())
+                    var loading by remember { mutableStateOf(true) }
+                    val recipeId = Route.Show.parseId(backStackEntry)
+                    LaunchedEffect(recipeId) {
+                        loading = true
+                        editModel.selectRecipe(recipeId)
+                        loading = false
                     }
+
+                    ShowRecipeScreen(
+                        loading = loading,
+                        recipe = recipe,
+                        openUrl = openUrl
+                    )
                 }
 
-                CreateRecipeScreen(
-                    loading = loading,
-                    recipe = recipe,
-                    onRecipeChange = editModel::updateRecipe,
-                    requestGalleryImage = editModel::requestGalleryImage,
-                    requestCameraImage = editModel::requestCameraImage,
-                    onCreateClick = {
-                        scope.launch {
-                            loading = true
-                            val newRecipe = editModel.createRecipe(recipe)
-                            controller.navigate(Route.Show.link(newRecipe)) {
-                                popUpTo(Route.List.route)
+                composable(Route.Edit.route) { backStackEntry ->
+                    val recipe by editModel.recipe.observeAsState(Recipe())
+                    var loading by remember { mutableStateOf(true) }
+                    val recipeId = Route.Edit.parseId(backStackEntry)
+                    val scope = rememberCoroutineScope()
+
+                    LaunchedEffect(recipeId) {
+                        loading = true
+                        editModel.selectRecipe(recipeId)
+                        loading = false
+                    }
+
+                    EditRecipeScreen(
+                        recipe = recipe,
+                        onRecipeChange = {
+                            editModel.updateRecipe(it)
+                        },
+                        loading = loading,
+                        requestGalleryImage = editModel::requestGalleryImage,
+                        requestCameraImage = editModel::requestCameraImage,
+                        onRecipeDelete = {
+                            scope.launch {
+                                editModel.delete(it)
+                                controller.navigate(Route.List.route) {
+                                    popUpTo(Route.List.route)
+                                    launchSingleTop = true
+                                }
                             }
                         }
-                    }
-                )
-            }
-
-            composable(Route.Show.route) { backStackEntry ->
-                val recipe by editModel.recipe.observeAsState(Recipe())
-                var loading by remember { mutableStateOf(true) }
-                val recipeId = Route.Show.parseId(backStackEntry)
-                LaunchedEffect(recipeId) {
-                    loading = true
-                    editModel.selectRecipe(recipeId)
-                    loading = false
+                    )
                 }
-
-                ShowRecipeScreen(
-                    loading = loading,
-                    recipe = recipe,
-                    openUrl = openUrl
-                )
-            }
-
-            composable(Route.Edit.route) { backStackEntry ->
-                val recipe by editModel.recipe.observeAsState(Recipe())
-                var loading by remember { mutableStateOf(true) }
-                val recipeId = Route.Edit.parseId(backStackEntry)
-                val scope = rememberCoroutineScope()
-
-                LaunchedEffect(recipeId) {
-                    loading = true
-                    editModel.selectRecipe(recipeId)
-                    loading = false
-                }
-
-                EditRecipeScreen(
-                    recipe = recipe,
-                    onRecipeChange = {
-                        editModel.updateRecipe(it)
-                    },
-                    loading = loading,
-                    requestGalleryImage = editModel::requestGalleryImage,
-                    requestCameraImage = editModel::requestCameraImage,
-                    onRecipeDelete = {
-                        scope.launch {
-                            editModel.delete(it)
-                            controller.navigate(Route.List.route) {
-                                popUpTo(Route.List.route)
-                                launchSingleTop = true
-                            }
-                        }
-                    }
-                )
             }
         }
     }
