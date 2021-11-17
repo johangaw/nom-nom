@@ -10,7 +10,7 @@ import androidx.activity.viewModels
 import com.example.nomnom.data.RecipeListViewModel
 import com.example.nomnom.data.EditRecipeViewModel
 import com.example.nomnom.repositories.RecipeDatabase
-import com.example.nomnom.services.ImageDecoder
+import com.example.nomnom.repositories.deleteImage
 
 
 class MainActivity : ComponentActivity() {
@@ -26,11 +26,10 @@ class MainActivity : ComponentActivity() {
         val imagePicker = ImagePickerLifecycleObserver(this, this.activityResultRegistry)
         lifecycle.addObserver(imagePicker)
         val editModel: EditRecipeViewModel by viewModels {
-            val imageDecoder = ImageDecoder(this.contentResolver)
             EditRecipeViewModel.ViewModelFactory(
                 imagePicker,
-                imageDecoder,
-                RecipeDatabase.getInstance(this).recipeRepository()
+                RecipeDatabase.getInstance(this).recipeRepository(),
+                deleteImage()
             )
         }
 

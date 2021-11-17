@@ -10,7 +10,7 @@ import androidx.core.content.FileProvider
 import androidx.core.net.toUri
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
-import com.example.nomnom.services.createImageFile
+import com.example.nomnom.repositories.createImageFile
 import java.io.File
 
 

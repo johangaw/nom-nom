@@ -12,8 +12,9 @@ import com.example.nomnom.data.RecipeListViewModel
 import com.example.nomnom.data.EditRecipeViewModel
 import com.example.nomnom.data.Recipe
 import com.example.nomnom.data.asRecipe
+import com.example.nomnom.repositories.fetchAndStore
 import com.example.nomnom.repositories.loadData
-import com.example.nomnom.services.ImageLoader
+import com.example.nomnom.services.throwOnCancellation
 import com.example.nomnom.ui.screen.CreateRecipeScreen
 import com.example.nomnom.ui.screen.EditRecipeScreen
 import com.example.nomnom.ui.screen.ShowRecipeScreen
@@ -106,7 +107,8 @@ fun App(
                     loading = true
                     val recipeDAO = loadData(recipeUrl)
                     val imageUri =
-                        runCatching { ImageLoader.getInstance().fetchAndStore(context, recipeDAO.imageUrl) }
+                        runCatching { fetchAndStore(context)(recipeDAO.imageUrl) }
+                            .throwOnCancellation()
                             .map { it.toString() }
                             .getOrDefault("")
                     editModel.updateRecipe(recipeDAO.asRecipe(imageUri))
