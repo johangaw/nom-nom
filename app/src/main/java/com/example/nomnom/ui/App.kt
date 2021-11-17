@@ -1,5 +1,6 @@
 package com.example.nomnom.ui
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.LocalContext
@@ -8,9 +9,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.nomnom.data.RecipeListViewModel
 import com.example.nomnom.data.EditRecipeViewModel
 import com.example.nomnom.data.Recipe
+import com.example.nomnom.data.RecipeListViewModel
 import com.example.nomnom.data.asRecipe
 import com.example.nomnom.repositories.fetchAndStore
 import com.example.nomnom.repositories.loadData
@@ -113,6 +114,13 @@ fun App(
                             .getOrDefault("")
                     editModel.updateRecipe(recipeDAO.asRecipe(imageUri))
                     loading = false
+                }
+
+                BackHandler {
+                    scope.launch {
+                        editModel.delete(recipe)
+                        controller.popBackStack()
+                    }
                 }
 
                 CreateRecipeScreen(

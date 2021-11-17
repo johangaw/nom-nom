@@ -27,6 +27,9 @@ fun Recipe.asRecipeEntity(): RecipeEntity {
     )
 }
 
+val RecipeEntity.isPersisted: Boolean
+    get() = id > 0
+
 @Entity(tableName = "recipes")
 data class RecipeEntity(
     @PrimaryKey(autoGenerate = true) val id: Int,
@@ -51,6 +54,9 @@ interface RecipeDBRepository {
 
     @Insert
     suspend fun create(recipe: RecipeEntity): Long
+
+    @Delete
+    suspend fun remove(recipe: RecipeEntity)
 }
 
 

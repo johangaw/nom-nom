@@ -28,6 +28,14 @@ class EditRecipeViewModel(
         _recipe.postValue(dbRepository.getOne(id.toInt()).asRecipe())
     }
 
+    suspend fun delete(recipe: Recipe) {
+        val entity = recipe.asRecipeEntity()
+        if(entity.isPersisted)
+            dbRepository.remove(entity)
+        if(recipe.imageUri.isNotEmpty())
+            deleteImage(Uri.parse(recipe.imageUri))
+    }
+
     fun updateRecipe(recipe: Recipe) {
         val oldImageUri = _recipe.value?.imageUri
         _recipe.postValue(recipe)
