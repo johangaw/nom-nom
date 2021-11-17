@@ -30,14 +30,14 @@ fun deleteImage(): IDeleteImage {
 fun fetchAndStore(context: Context): IDownloadAndStoreImage {
     suspend fun inner(url: String): Uri {
         return withContext(Dispatchers.IO) {
-            val dst = createImageFile(context)
             val input = URL(url).openStream()
             input.use {
+                val dst = createImageFile(context)
                 dst.outputStream().use { output ->
                     input.copyTo(output)
                 }
-            }
-            dst.toUri()
+                dst
+            }.toUri()
         }
     }
     return ::inner
